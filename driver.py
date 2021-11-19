@@ -4,9 +4,10 @@ import pandas as pd
 import seaborn as sns
 
 from evo import Environment
+from mpl_toolkits.mplot3d import Axes3D
 from order import Order
 from pprint import pprint
-from random import randrange
+from random import randrange, shuffle
 
 
 def setups(L: list) -> int:  # minimise
@@ -51,6 +52,45 @@ def random_swapper(solns) -> list:
 
     return L
 
+def priority_swapper(solns) -> list:  # try to minimise low_priority
+    """Swap orders based on priority
+    Parameters:
+        solns (list): list of solns
+    Returns:
+        list: new list of orders"""
+
+    L = solns[0]
+
+    high_priority = [o for o in L if o.oprior() == Order.PRIOR_MAP['HIGH']]
+    low_priority = [o for o in L if o.oprior() == Order.PRIOR_MAP['LOW']]
+
+    return high_priority + low_priority
+
+def product_swapper(solns) -> list:  # try to minimise setups
+    """Swap orders based on product
+    Parameters:
+        solns (list): list of solns
+    Returns:
+        list: new list of orders"""
+
+    L = solns[0]
+    soln = []
+
+    _ = [soln.extend(s) for s in [[o for o in L if o.oprod() == prod] for prod in Order.PRODUCTS]]
+
+    return soln
+
+def id_swapper(solns) -> list:  # try to minimise delays:
+    """Swap orders based on ID
+    Parameters:
+        solns (list): list of solns
+    Returns:
+        list: new list of orders"""
+
+    L = solns[0]
+
+    return [Order(i, pri, pro, q) for i, pri, pro, q in sorted([o.get_props() for o in L], key = lambda x: x[0])]
+
 def read_json(filepath) -> dict:
     """Reads a JSON file
     Parameters:
@@ -74,13 +114,18 @@ def main():
         ord_obj = Order(int(o_id), o['priority'], o['product'], o['quantity'])
         L.append(ord_obj)
 
+    # shuffle(L)
+
     E = Environment()
 
     E.add_fitness('setups', setups)
     E.add_fitness('low_priority', low_priority)
     E.add_fitness('delays', delays)
 
-    E.add_agent('random_swapper', random_swapper, 1)
+    # E.add_agent('random_swapper', random_swapper, 1)
+    E.add_agent('priority_swapper', priority_swapper, 1)
+    E.add_agent('product_swapper', product_swapper, 1)
+    E.add_agent('id_swapper', id_swapper, 1)
 
     E.add_solution(L)
 
@@ -95,6 +140,15 @@ def main():
     pprint(df)
 
     sns.pairplot(df, corner = True)
+    plt.show()
+    plt.close()
+
+    ax3d = Axes3D(plt.figure())
+    ax3d.scatter(df['setups'], df['low_priority'], df['delays'], c = '#552583')
+    ax3d.set_title('Tradeoffs')
+    ax3d.set_xlabel('Setups')
+    ax3d.set_ylabel('Low_Priority')
+    ax3d.set_zlabel('Delays')
     plt.show()
     plt.close()
 
