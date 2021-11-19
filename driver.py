@@ -1,6 +1,6 @@
-# import evo
 import json
 
+from evo import Environment
 from order import Order
 from random import randrange
 
@@ -31,7 +31,7 @@ def delays(L: list) -> int:  # minimise
     Returns:
         int: sum of delays"""
 
-    return sum([(L[i].oid(), L[i].oquant()) for i in range(len(L) - 1) if L[i].oid() > L[i + 1].oid()])
+    return sum([L[i].oquant() for i in range(len(L) - 1) if L[i].oid() > L[i + 1].oid()])
 
 def random_swapper(solns) -> list:
     """Randomly swap two orders
@@ -69,6 +69,18 @@ def main():
     for o_id, o in orders.items():
         ord_obj = Order(int(o_id), o['priority'], o['product'], o['quantity'])
         L.append(ord_obj)
+
+    E = Environment()
+
+    E.add_fitness('setups', setups)
+    E.add_fitness('low_priority', low_priority)
+    E.add_fitness('delays', delays)
+
+    E.add_agent('random_swapper', random_swapper, 1)
+
+    E.add_solution(L)
+
+    E.evolve(10000)
 
 
 main()

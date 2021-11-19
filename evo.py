@@ -75,11 +75,50 @@ class Environment():
 
         self.add_solution(func(solns))
 
+    @staticmethod
+    def _dominates(p, q) -> bool:
+        """Check if solution q dominates p
+        Parameters:
+            p (tuple): evaluation of soln p i.e. ((objective1, score1), (objective2, score2), ...)
+            q (tuple): evaluation of soln q
+        Returns:
+            bool: whether q dominates p or not"""
+
+        p_scores = [score for _, score in p]
+        q_scores = [score for _, score in q]
+
+        score_diff = list(map(lambda x, y: y - x, p_scores, q_scores))
+        
+        min_diff, max_diff = min(score_diff), max(score_diff)
+
+        return min_diff >= 0.0 and max_diff > 0
+
+    @staticmethod
+    def _reduce_non_dom(S, p) -> set:
+        """Create the non-dominated set of solutions
+        Parameters:
+            S (set): evaluation of all solutions for pairwise comparison with p
+            p (set): evaluation of all solutions for pairwise comparison with each solution q in S
+        Returns:
+            set: the set of non-dominated solutions"""
+
+        return S - {q for q in S if Environment._dominates(p, q)}
+
     def remove_dominated(self) -> None:
-        """"""
+        """Remove dominated solutions from the population
+        Returns:
+            None"""
+
+        non_dom_set = reduce(Environment._reduce_non_dom, self.pop.keys(), self.pop.keys())
+
+        self.pop = {k: self.pop[k] for k in non_dom_set}
 
     def evolve(self, iters, dom = 100, status = 1000) -> None:
-        """"""
+        """Simulate the environment
+        Parameters:
+            iters (int): number of iterations
+            dom (int): interval to remove solutions
+            status (int): interval to print stats"""
 
         agents = list(self.agent.keys())
 
@@ -94,3 +133,10 @@ class Environment():
                 print('Population:', self.size())
 
         self.remove_dominated()
+
+    def get_population(self) -> dict:
+        """Retrieve the population
+        Returns:
+            dict: the population"""
+
+        return self.pop

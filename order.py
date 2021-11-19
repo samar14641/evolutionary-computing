@@ -43,3 +43,10 @@ class Order():
             int: order quantity"""
 
         return self.o_quant
+
+    def get_props(self) -> tuple:
+        """Get order properties as a tuple
+        Returns:
+            tuple: the order properties"""
+
+        return (self.o_id, self.o_prior, self.o_prod, self.o_quant)
