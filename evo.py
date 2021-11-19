@@ -140,3 +140,10 @@ class Environment():
             dict: the population"""
 
         return self.pop
+
+    def get_scores(self) -> tuple:
+        """Retrieve the objective scores for the population
+        Returns:
+            tuple: the objective scores"""
+
+        return tuple(self.pop.keys())

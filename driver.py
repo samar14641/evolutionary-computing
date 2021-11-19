@@ -1,7 +1,11 @@
 import json
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 
 from evo import Environment
 from order import Order
+from pprint import pprint
 from random import randrange
 
 
@@ -81,6 +85,18 @@ def main():
     E.add_solution(L)
 
     E.evolve(10000)
+    
+    df = pd.DataFrame(E.get_scores())
+    for i in range(df.shape[1]):
+        df[i] = df[i].apply(lambda x: x[1])
+
+    df.rename(columns = {0: 'setups', 1: 'low_priority', 2: 'delays'}, inplace = True)
+
+    pprint(df)
+
+    sns.pairplot(df, corner = True)
+    plt.show()
+    plt.close()
 
 
 main()
