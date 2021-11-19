@@ -38,7 +38,7 @@ def delays(L: list) -> int:  # minimise
 
     return sum([L[i].oquant() for i in range(len(L) - 1) if L[i].oid() > L[i + 1].oid()])
 
-def random_swapper(solns) -> list:
+def random_swapper(solns: list) -> list:
     """Randomly swap two orders
     Parameters:
         solns (list): list of solns
@@ -52,7 +52,7 @@ def random_swapper(solns) -> list:
 
     return L
 
-def priority_swapper(solns) -> list:  # try to minimise low_priority
+def priority_swapper(solns: list) -> list:  # try to minimise low_priority
     """Swap orders based on priority
     Parameters:
         solns (list): list of solns
@@ -66,7 +66,7 @@ def priority_swapper(solns) -> list:  # try to minimise low_priority
 
     return high_priority + low_priority
 
-def product_swapper(solns) -> list:  # try to minimise setups
+def product_swapper(solns: list) -> list:  # try to minimise setups
     """Swap orders based on product
     Parameters:
         solns (list): list of solns
@@ -80,7 +80,7 @@ def product_swapper(solns) -> list:  # try to minimise setups
 
     return soln
 
-def id_swapper(solns) -> list:  # try to minimise delays:
+def id_swapper(solns: list) -> list:  # try to minimise delays:
     """Swap orders based on ID
     Parameters:
         solns (list): list of solns
@@ -135,7 +135,7 @@ def main():
     for i in range(df.shape[1]):
         df[i] = df[i].apply(lambda x: x[1])
 
-    df.rename(columns = {0: 'setups', 1: 'low_priority', 2: 'delays'}, inplace = True)
+    df.rename(columns = {0: 'Setups', 1: 'High-LastIndex', 2: 'Delays'}, inplace = True)
 
     pprint(df)
 
@@ -144,13 +144,17 @@ def main():
     plt.close()
 
     ax3d = Axes3D(plt.figure())
-    ax3d.scatter(df['setups'], df['low_priority'], df['delays'], c = '#552583')
+    ax3d.scatter(df['Setups'], df['High-LastIndex'], df['Delays'], c = '#552583')
     ax3d.set_title('Tradeoffs')
     ax3d.set_xlabel('Setups')
-    ax3d.set_ylabel('Low_Priority')
+    ax3d.set_ylabel('High-LastIndex')
     ax3d.set_zlabel('Delays')
     plt.show()
     plt.close()
+
+    df['TeamName'] = 'Samar'
+
+    df.to_csv('./summary.csv', index = False)
 
 
 main()
