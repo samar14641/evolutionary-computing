@@ -122,14 +122,14 @@ def main():
     E.add_fitness('low_priority', low_priority)
     E.add_fitness('delays', delays)
 
-    # E.add_agent('random_swapper', random_swapper, 1)
+    E.add_agent('random_swapper', random_swapper, 1)
     E.add_agent('priority_swapper', priority_swapper, 1)
     E.add_agent('product_swapper', product_swapper, 1)
     E.add_agent('id_swapper', id_swapper, 1)
 
     E.add_solution(L)
 
-    E.evolve(10000)
+    E.evolve(100000)
     
     df = pd.DataFrame(E.get_scores())
     for i in range(df.shape[1]):
@@ -139,18 +139,18 @@ def main():
 
     pprint(df)
 
-    sns.pairplot(df, corner = True)
-    plt.show()
-    plt.close()
+    # sns.pairplot(df, corner = True)
+    # plt.show()
+    # plt.close()
 
-    ax3d = Axes3D(plt.figure())
-    ax3d.scatter(df['Setups'], df['High-LastIndex'], df['Delays'], c = '#552583')
-    ax3d.set_title('Tradeoffs')
-    ax3d.set_xlabel('Setups')
-    ax3d.set_ylabel('High-LastIndex')
-    ax3d.set_zlabel('Delays')
-    plt.show()
-    plt.close()
+    # ax3d = Axes3D(plt.figure())
+    # ax3d.scatter(df['Setups'], df['High-LastIndex'], df['Delays'], c = '#552583')
+    # ax3d.set_title('Tradeoffs')
+    # ax3d.set_xlabel('Setups')
+    # ax3d.set_ylabel('High-LastIndex')
+    # ax3d.set_zlabel('Delays')
+    # plt.show()
+    # plt.close()
 
     df['TeamName'] = 'Samar'
 

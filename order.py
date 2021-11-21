@@ -1,8 +1,6 @@
-from typing import Final
-
 class Order():
-    PRIOR_MAP: Final = {'HIGH': 1, 'LOW': 2, 1: 1, 2: 2}  # int keys due to id_swapper in driver
-    PRODUCTS: Final = ('Chair', 'Floppy', 'GPU', 'Laptop', 'Plant')
+    PRIOR_MAP = {'HIGH': 1, 'LOW': 2, 1: 1, 2: 2}  # int keys due to id_swapper in driver
+    PRODUCTS = ('Chair', 'Floppy', 'GPU', 'Laptop', 'Plant')
 
     def __init__(self, o_id, o_prior, o_prod, o_quant) -> None:
         """Constructor to initialise the order object
